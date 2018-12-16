@@ -1,0 +1,132 @@
+<div class="container mt-30">
+
+  <section>
+    <h4>Single Control</h4>
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" placeholder="Enter email" [formControl]="email">
+      <p class="mt">
+        Value: <code>{{email.value}}</code>
+      </p>
+      <p class="mt">
+        Valid: <code>{{email.valid}}</code>
+      </p>
+      <p class="mt">
+        Errors: <code>{{email.errors | json}}</code>
+      </p>
+    </div>
+  </section>
+
+
+  <section>
+    <h4>Array Control</h4>
+    <button class="btn btn-primary" (click)="addControl()">Add</button>
+
+    <div *ngFor="let control of arr.controls; index as index">
+      {{index}} - <input [formControl]="arr.controls[index]" class="form-control">
+    </div>
+
+    <p class="mt">
+      Value: <code>{{arr.value}}</code>
+    </p>
+    <p class="mt">
+      Valid: <code>{{arr.valid}}</code>
+    </p>
+    <p class="mt">
+      Errors: <code>{{arr.errors | json}}</code>
+    </p>
+  </section>
+
+
+  <section>
+    <h4>Group Control</h4>
+    <form [formGroup]="group">
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Email address</label>
+        <input type="email" class="form-control" formControlName="email" id="exampleFormControlInput1" placeholder="name@example.com">
+      </div>
+      <div class="form-group">
+        <label>Price</label>
+        <input type="number" class="form-control" formControlName="price" placeholder="Price" [class.border-danger]="group.get('price').errors">
+        Price Valid: <code>{{ group.get('price').valid}}</code>
+        <p>Price Errors: <code>{{ group.get('price').errors | json }}</code></p>
+      </div>
+      <div formGroupName="phone">
+        <div class="form-group">
+          <label>Number</label>
+          <input type="number" class="form-control" formControlName="number" placeholder="Number">
+        </div>
+        <div class="form-group">
+          <label>Prefix</label>
+          <input type="number" class="form-control" formControlName="prefix" placeholder="Prefix">
+        </div>
+        <div formGroupName="a">
+          <div class="form-group">
+            <label>B</label>
+            <input class="form-control" formControlName="b" placeholder="B">
+          </div>
+          <div class="form-group">
+            <label>C</label>
+            <input class="form-control" formControlName="c" placeholder="C">
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Example select</label>
+        <select class="form-control" id="exampleFormControlSelect1" formControlName="number">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" formControlName="checkbox">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+      </div>
+    </form>
+
+    <p class="mt">
+      Value: <code>{{group.value | json}}</code>
+    </p>
+    <p class="mt">
+      Valid: <code>{{group.valid}}</code>
+    </p>
+  </section>
+
+  <section>
+    <h4>Group with Array Control</h4>
+    <button class="btn btn-primary" (click)="addSkill()">Add</button>
+    <form [formGroup]="config">
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" formControlName="someBoolean">
+        <label class="form-check-label">Check me out</label>
+      </div>
+      <div class="form-group" formArrayName="skills">
+        <label>Skills</label>
+        <div *ngFor="let control of config.get('skills').controls; index as index">
+          {{index}} - <input [formControlName]="index" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Min age</label>
+        <input type="number" class="form-control" formControlName="minAge" placeholder="Min age">
+      </div>
+    </form>
+
+    <p class="mt">
+      Value: <code>{{config.value | json}}</code>
+    </p>
+    <p class="mt">
+      Valid: <code>{{config.valid}}</code>
+    </p>
+    <p class="mt">
+      Errors: <code>{{config.errors | json}}</code>
+    </p>
+  </section>
+
+  <!-- <button (click)="clear('contact')">Clear contact</button>
+  <button (click)="reset()">Reset config</button> -->
+</div>
