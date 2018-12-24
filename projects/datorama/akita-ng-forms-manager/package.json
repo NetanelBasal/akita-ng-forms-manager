@@ -1,10 +1,10 @@
 {
   "name": "@datorama/akita-ng-forms-manager",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "peerDependencies": {
     "@angular/common": "^7.0.0",
-    "@angular/forms": "7.0.0",
     "@angular/core": "^7.0.0",
+    "@angular/forms": "7.0.0",
     "@datorama/akita": "^1.22.1"
   }
 }

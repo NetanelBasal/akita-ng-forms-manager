@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AkitaNgFormsManager } from '../../../projects/datorama/akita-ng-forms-manager/src/lib/forms-manager';
 import { FormsState } from '../forms-state';
 import { FormControl, FormGroup } from '@angular/forms';
+import { AkitaNgFormsManager } from '@datorama/akita-ng-forms-manager';
 
 @Component({
   selector: 'app-settings',

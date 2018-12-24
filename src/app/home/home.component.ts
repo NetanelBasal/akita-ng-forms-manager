@@ -11,7 +11,7 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
 import {
   AkitaNgFormsManager,
   setValidators
-} from 'projects/datorama/akita-ng-forms-manager/src/public_api';
+} from '@datorama/akita-ng-forms-manager';
 
 @Component({
   selector: 'app-home',

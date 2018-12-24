@@ -10,6 +10,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
+    "paths": {
+      "@datorama/akita-ng-forms-manager": [
+        "./projects/datorama/akita-ng-forms-manager/src/public_api.ts"
+      ]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],
