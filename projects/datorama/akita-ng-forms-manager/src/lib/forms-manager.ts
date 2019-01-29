@@ -1,11 +1,4 @@
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormArray,
-  FormControl,
-  FormGroup,
-  ValidatorFn
-} from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -15,15 +8,7 @@ import { FormsQuery } from './forms-manager.query';
 
 export type AkitaAbstractControl = Pick<
   AbstractControl,
-  | 'value'
-  | 'valid'
-  | 'invalid'
-  | 'disabled'
-  | 'errors'
-  | 'touched'
-  | 'pristine'
-  | 'pending'
-  | 'dirty'
+  'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'
 >;
 
 export interface AkitaAbstractGroup<C = any> extends AkitaAbstractControl {
@@ -54,48 +39,29 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   selectValid(formName: keyof FormsState, path?: string): Observable<boolean> {
-    return this.selectControl(formName, path).pipe(
-      map(control => control.valid)
-    );
+    return this.selectControl(formName, path).pipe(map(control => control.valid));
   }
 
   selectDirty(formName: keyof FormsState, path?: string): Observable<boolean> {
-    return this.selectControl(formName, path).pipe(
-      map(control => control.dirty)
-    );
+    return this.selectControl(formName, path).pipe(map(control => control.dirty));
   }
 
-  selectDisabled(
-    formName: keyof FormsState,
-    path?: string
-  ): Observable<boolean> {
-    return this.selectControl(formName, path).pipe(
-      map(control => control.disabled)
-    );
+  selectDisabled(formName: keyof FormsState, path?: string): Observable<boolean> {
+    return this.selectControl(formName, path).pipe(map(control => control.disabled));
   }
 
-  selectValue<T = any>(
-    formName: keyof FormsState,
-    path?: string
-  ): Observable<T> {
-    return this.selectControl(formName, path).pipe(
-      map(control => control.value)
-    );
+  selectValue<T = any>(formName: keyof FormsState, path?: string): Observable<T> {
+    return this.selectControl(formName, path).pipe(map(control => control.value));
   }
 
-  selectErrors(formName: keyof FormsState, path?: string) {
-    return this.selectControl(formName, path).pipe(
-      map(control => control.errors)
-    );
+  selectErrors(formName: keyof FormsState, path?: string): Observable<any> {
+    return this.selectControl(formName, path).pipe(map(control => control.errors));
   }
 
   /**
    * If no path specified it means that it's a single FormControl or FormArray
    */
-  selectControl(
-    formName: keyof FormsState,
-    path?: string
-  ): Observable<AkitaAbstractControl> {
+  selectControl(formName: keyof FormsState, path?: string): Observable<AkitaAbstractControl> {
     if (!path) {
       return this.selectForm(formName);
     }
@@ -125,9 +91,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     return this.query.select(state => state[formName as any]).pipe(filterNil);
   }
 
-  getForm<Name extends keyof FormsState>(
-    formName: keyof FormsState
-  ): AkitaAbstractGroup<FormsState[Name]> {
+  getForm<Name extends keyof FormsState>(formName: keyof FormsState): AkitaAbstractGroup<FormsState[Name]> {
     return this.query.getSnapshot()[formName as any];
   }
 
@@ -148,12 +112,9 @@ export class AkitaNgFormsManager<FormsState = any> {
 
     /** If the form already exist, patch the form with the store value */
     if (this.hasForm(formName) === true) {
-      form.patchValue(
-        this.resolveStoreToForm(formName, form, merged.arrControlFactory),
-        {
-          emitEvent: merged.emitEvent
-        }
-      );
+      form.patchValue(this.resolveStoreToForm(formName, form, merged.arrControlFactory), {
+        emitEvent: merged.emitEvent
+      });
     } else {
       /** else update the store with the current form state */
       this.updateStore(formName, form, true);
@@ -168,17 +129,14 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   remove(formName: keyof FormsState) {
     const snapshot = this.query.getSnapshot();
-    const newState: Partial<FormsState> = Object.keys(snapshot).reduce(
-      (acc, currentFormName) => {
-        if (formName !== currentFormName) {
-          acc[currentFormName] = snapshot[currentFormName];
-        } else {
-          acc[currentFormName] = null;
-        }
-        return acc;
-      },
-      {}
-    );
+    const newState: Partial<FormsState> = Object.keys(snapshot).reduce((acc, currentFormName) => {
+      if (formName !== currentFormName) {
+        acc[currentFormName] = snapshot[currentFormName];
+      } else {
+        acc[currentFormName] = null;
+      }
+      return acc;
+    }, {});
 
     applyAction(
       () => {
@@ -211,9 +169,7 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   private find(control: AkitaAbstractGroup, path: string[]) {
     return path.reduce((current: AkitaAbstractGroup, name: string) => {
-      return current.controls.hasOwnProperty(name)
-        ? current.controls[name]
-        : null;
+      return current.controls.hasOwnProperty(name) ? current.controls[name] : null;
     }, control);
   }
 
@@ -243,9 +199,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       if (!arrControlFactory) {
         throw new Error('Please provide arrControlFactory');
       }
-      formValue.forEach((v, i) =>
-        (control as FormArray).insert(i, (arrControlFactory as Function)(v))
-      );
+      formValue.forEach((v, i) => (control as FormArray).insert(i, (arrControlFactory as Function)(v)));
     } else {
       Object.keys(formValue).forEach(controlName => {
         const value = formValue[controlName];
@@ -253,9 +207,7 @@ export class AkitaNgFormsManager<FormsState = any> {
           const current = control.get(controlName) as FormArray;
           const fc = arrControlFactory[controlName];
           if (!fc) {
-            throw new Error(
-              `Please provide arrControlFactory for ${controlName}`
-            );
+            throw new Error(`Please provide arrControlFactory for ${controlName}`);
           }
           this.cleanArray(current);
           value.forEach((v, i) => current.insert(i, fc(v)));
@@ -270,10 +222,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     }
   }
 
-  private buildFormStoreState(
-    formName: keyof FormsState,
-    form: AbstractControl
-  ) {
+  private buildFormStoreState(formName: keyof FormsState, form: AbstractControl) {
     let value;
 
     if (form instanceof FormControl) {
@@ -300,11 +249,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     return value;
   }
 
-  private updateStore(
-    formName: keyof FormsState,
-    form: AbstractControl,
-    initial = false
-  ) {
+  private updateStore(formName: keyof FormsState, form: AbstractControl, initial = false) {
     const value = this.buildFormStoreState(formName, form);
     applyAction(
       () => {
@@ -316,9 +261,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     );
   }
 
-  private resolveFormToStore(
-    control: Partial<AbstractControl>
-  ): AkitaAbstractControl {
+  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl {
     return {
       value: control.value,
       valid: control.valid,
@@ -333,18 +276,12 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 }
 
-export function setValidators(
-  control: AbstractControl,
-  validator: ValidatorFn | ValidatorFn[] | null
-) {
+export function setValidators(control: AbstractControl, validator: ValidatorFn | ValidatorFn[] | null) {
   control.setValidators(coerceArray(validator));
   control.updateValueAndValidity();
 }
 
-export function setAsyncValidators(
-  control: AbstractControl,
-  validator: AsyncValidatorFn | AsyncValidatorFn[] | null
-) {
+export function setAsyncValidators(control: AbstractControl, validator: AsyncValidatorFn | AsyncValidatorFn[] | null) {
   control.setValidators(coerceArray(validator));
   control.updateValueAndValidity();
 }
