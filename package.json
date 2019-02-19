@@ -15,6 +15,7 @@
   "repository": {
     "url": "https://github.com/NetanelBasal/akita-ng-forms-manager"
   },
+  "license": "Apache License 2.0",
   "dependencies": {
     "@angular/animations": "~7.0.0",
     "@angular/common": "~7.0.0",
