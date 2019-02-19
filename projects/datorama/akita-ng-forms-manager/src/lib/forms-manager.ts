@@ -203,7 +203,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     } else {
       Object.keys(formValue).forEach(controlName => {
         const value = formValue[controlName];
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value instanceof FormArray) {
           const current = control.get(controlName) as FormArray;
           const fc = arrControlFactory[controlName];
           if (!fc) {
