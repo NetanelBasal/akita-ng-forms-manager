@@ -1,6 +1,6 @@
 import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HashMap, filterNil, applyAction, coerceArray } from '@datorama/akita';
 import { FormsStore } from './forms-manager.store';
@@ -120,7 +120,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       this.updateStore(formName, form, true);
     }
 
-    this.valueChanges[formName as any] = form.valueChanges
+    this.valueChanges[formName as any] = merge(form.valueChanges, form.statusChanges.pipe(distinctUntilChanged()))
       .pipe(debounceTime(merged.debounceTime))
       .subscribe(() => this.updateStore(formName, form));
 
