@@ -2,7 +2,7 @@ import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, V
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable, Subscription, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HashMap, filterNil, applyAction, coerceArray } from '@datorama/akita';
+import { HashMap, filterNil, coerceArray, setAction } from '@datorama/akita';
 import { FormsStore } from './forms-manager.store';
 import { FormsQuery } from './forms-manager.query';
 
@@ -92,7 +92,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   getForm<Name extends keyof FormsState>(formName: keyof FormsState): AkitaAbstractGroup<FormsState[Name]> {
-    return this.query.getSnapshot()[formName as any];
+    return this.query.getValue()[formName as any];
   }
 
   hasForm(formName: keyof FormsState): boolean {
@@ -128,7 +128,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   remove(formName: keyof FormsState) {
-    const snapshot = this.query.getSnapshot();
+    const snapshot = this.query.getValue();
     const newState: Partial<FormsState> = Object.keys(snapshot).reduce((acc, currentFormName) => {
       if (formName !== currentFormName) {
         acc[currentFormName] = snapshot[currentFormName];
@@ -138,12 +138,8 @@ export class AkitaNgFormsManager<FormsState = any> {
       return acc;
     }, {});
 
-    applyAction(
-      () => {
-        this.store.setState(() => newState as any);
-      },
-      { type: `Clear ${formName}` }
-    );
+    setAction(`Clear ${formName}`);
+    this.store.update(() => newState as any);
   }
 
   unsubscribe(formName?: keyof FormsState) {
@@ -251,14 +247,10 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   private updateStore(formName: keyof FormsState, form: AbstractControl, initial = false) {
     const value = this.buildFormStoreState(formName, form);
-    applyAction(
-      () => {
-        this.store.update({
-          [formName]: value
-        } as any);
-      },
-      { type: `${initial ? 'Create' : 'Update'} ${formName}` }
-    );
+    setAction(`${initial ? 'Create' : 'Update'} ${formName}`);
+    this.store.update({
+      [formName]: value
+    } as any);
   }
 
   private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl {

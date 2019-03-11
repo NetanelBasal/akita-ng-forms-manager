@@ -1,23 +1,14 @@
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AkitaNgFormsManager } from './forms-manager';
 import { fakeAsync, tick } from '@angular/core/testing';
 
 // get forms snapshot
 function gs(formsManager) {
-  return formsManager.query.getSnapshot();
+  return formsManager.query.getValue();
 }
 
 describe('FormsManager', () => {
-  let formsManager: AkitaNgFormsManager,
-    control: FormControl,
-    arr: FormArray,
-    group: FormGroup;
+  let formsManager: AkitaNgFormsManager, control: FormControl, arr: FormArray, group: FormGroup;
 
   beforeEach(() => {
     formsManager = new AkitaNgFormsManager();
