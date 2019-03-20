@@ -9,7 +9,7 @@ import {
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable, Subscription, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HashMap, filterNil, coerceArray, setAction } from '@datorama/akita';
+import { HashMap, filterNil, coerceArray, logAction } from '@datorama/akita';
 import { FormsStore } from './forms-manager.store';
 import { FormsQuery } from './forms-manager.query';
 
@@ -183,7 +183,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       {}
     );
 
-    setAction(`Clear ${formName}`);
+    logAction(`Clear ${formName}`);
     this.store.update(() => newState as any);
   }
 
@@ -305,7 +305,8 @@ export class AkitaNgFormsManager<FormsState = any> {
     initial = false
   ) {
     const value = this.buildFormStoreState(formName, form);
-    setAction(`${initial ? 'Create' : 'Update'} ${formName}`);
+    const action = `${initial ? 'Create' : 'Update'} ${formName}`;
+    logAction(action);
     this.store.update({
       [formName]: value
     } as any);
