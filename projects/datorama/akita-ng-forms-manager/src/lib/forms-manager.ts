@@ -316,12 +316,12 @@ export class AkitaNgFormsManager<FormsState = any> {
     control: Partial<AbstractControl>
   ): AkitaAbstractControl {
     return {
-      value: control.value,
+      value: JSON.parse(JSON.stringify(control.value)), // Clone object to prevent issue with third party that would be affected by store freezing.
       valid: control.valid,
       dirty: control.dirty,
       invalid: control.invalid,
       disabled: control.disabled,
-      errors: control.errors,
+      errors: JSON.parse(JSON.stringify(control.errors)),
       touched: control.touched,
       pristine: control.pristine,
       pending: control.pending
