@@ -3,13 +3,13 @@ import {
   AsyncValidatorFn,
   FormArray,
   FormControl,
-  FormGroup,
+  FormGroup, ValidationErrors,
   ValidatorFn
 } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable, Subscription, merge } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HashMap, filterNil, coerceArray, logAction } from '@datorama/akita';
+import {HashMap, filterNil, coerceArray, logAction, isObject} from '@datorama/akita';
 import { FormsStore } from './forms-manager.store';
 import { FormsQuery } from './forms-manager.query';
 
@@ -316,7 +316,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     control: Partial<AbstractControl>
   ): AkitaAbstractControl {
     return {
-      value: control.value,
+      value: this.cloneValue(control.value), // Clone object to prevent issue with third party that would be affected by store freezing.
       valid: control.valid,
       dirty: control.dirty,
       invalid: control.invalid,
@@ -326,6 +326,10 @@ export class AkitaNgFormsManager<FormsState = any> {
       pristine: control.pristine,
       pending: control.pending
     };
+  }
+
+  private cloneValue(value: any): any {
+    return isObject(value) ? {...value} :  Array.isArray(value) ? [...value] :  value;
   }
 }
 
