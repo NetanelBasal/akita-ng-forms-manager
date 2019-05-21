@@ -200,7 +200,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       Object.keys(formValue).forEach(controlName => {
         const value = formValue[controlName];
         if (Array.isArray(value)) {
-          if (controlName in arrControlFactory === false) {
+          if (!arrControlFactory || (arrControlFactory && controlName in arrControlFactory === false)) {
             throw new Error('Please provide arrControlFactory for ' + controlName);
           }
           const current = control.get(controlName) as FormArray;
