@@ -144,8 +144,10 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   unsubscribe(formName?: keyof FormsState) {
     if (formName) {
-      this.valueChanges[formName as any].unsubscribe();
-      delete this.valueChanges[formName as any];
+      if (this.valueChanges[formName as any]) {
+        this.valueChanges[formName as any].unsubscribe();
+        delete this.valueChanges[formName as any];
+      }
     } else {
       for (const name of Object.keys(this.valueChanges)) {
         this.valueChanges[name].unsubscribe();
