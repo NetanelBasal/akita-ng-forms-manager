@@ -1,20 +1,12 @@
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormArray,
-  FormControl,
-  FormGroup, ValidationErrors,
-  ValidatorFn
-} from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable, Subscription, merge } from 'rxjs';
-import { Injectable } from '@angular/core';
-import {HashMap, filterNil, coerceArray, logAction, isObject} from '@datorama/akita';
-import { FormsStore } from './forms-manager.store';
-import { FormsQuery } from './forms-manager.query';
+import {AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import {merge, Observable, Subscription} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {coerceArray, filterNil, HashMap, isObject, logAction} from '@datorama/akita';
+import {FormsStore} from './forms-manager.store';
+import {FormsQuery} from './forms-manager.query';
 
-export type AkitaAbstractControl = Pick<
-  AbstractControl,
+export type AkitaAbstractControl = Pick<AbstractControl,
   | 'value'
   | 'valid'
   | 'invalid'
@@ -23,8 +15,7 @@ export type AkitaAbstractControl = Pick<
   | 'touched'
   | 'pristine'
   | 'pending'
-  | 'dirty'
->;
+  | 'dirty'>;
 
 export interface AkitaAbstractGroup<C = any> extends AkitaAbstractControl {
   controls: { readonly [P in keyof C]: AkitaAbstractControl };
@@ -40,17 +31,17 @@ export class AkitaNgFormsManager<FormsState = any> {
   private readonly _query: FormsQuery<FormsState>;
   private valueChanges: HashMap<Subscription> = {};
 
+  constructor() {
+    this._store = new FormsStore({} as FormsState);
+    this._query = new FormsQuery(this.store);
+  }
+
   get query() {
     return this._query;
   }
 
   get store() {
     return this._store;
-  }
-
-  constructor() {
-    this._store = new FormsStore({} as FormsState);
-    this._query = new FormsQuery(this.store);
   }
 
   selectValid(formName: keyof FormsState, path?: string): Observable<boolean> {
@@ -144,7 +135,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       arrControlFactory?: ArrayControlFactory | HashMap<ArrayControlFactory>;
     } = {}
   ) {
-    const merged = { ...{ debounceTime: 300, emitEvent: false }, ...config };
+    const merged = {...{debounceTime: 300, emitEvent: false}, ...config};
 
     /** If the form already exist, patch the form with the store value */
     if (this.hasForm(formName) === true) {
@@ -329,7 +320,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   private cloneValue(value: any): any {
-    return isObject(value) ? {...value} :  Array.isArray(value) ? [...value] :  value;
+    return isObject(value) ? {...value} : Array.isArray(value) ? [...value] : value;
   }
 }
 
