@@ -144,8 +144,12 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   unsubscribe(formName?: keyof FormsState) {
     if (formName) {
-      this.valueChanges[formName as any].unsubscribe();
-      delete this.valueChanges[formName as any];
+      if (this.valueChanges[formName as any]) {
+        this.valueChanges[formName as any].unsubscribe();
+        delete this.valueChanges[formName as any];
+      } else {
+        console.info(`Cannot unsubscribe from ${formName} as it doesn't exist`);
+      }
     } else {
       for (const name of Object.keys(this.valueChanges)) {
         this.valueChanges[name].unsubscribe();
@@ -200,7 +204,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       Object.keys(formValue).forEach(controlName => {
         const value = formValue[controlName];
         if (Array.isArray(value)) {
-          if (controlName in arrControlFactory === false) {
+          if (!arrControlFactory || (arrControlFactory && controlName in arrControlFactory === false)) {
             throw new Error('Please provide arrControlFactory for ' + controlName);
           }
           const current = control.get(controlName) as FormArray;
