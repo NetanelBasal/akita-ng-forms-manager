@@ -87,8 +87,11 @@ export class AkitaNgFormsManager<FormsState = any> {
     return null;
   }
 
-  selectForm(formName: keyof FormsState): Observable<AkitaAbstractGroup> {
-    return this.query.select(state => state[formName as any]).pipe(filterNil);
+  selectForm(
+    formName: keyof FormsState,
+    options: { filterNil: true } = { filterNil: true }
+  ): Observable<AkitaAbstractGroup> {
+    return this.query.select(state => state[formName as any]).pipe(options.filterNil ? filterNil : s => s);
   }
 
   getForm<Name extends keyof FormsState>(formName: keyof FormsState): AkitaAbstractGroup<FormsState[Name]> {
@@ -147,8 +150,6 @@ export class AkitaNgFormsManager<FormsState = any> {
       if (this.valueChanges[formName as any]) {
         this.valueChanges[formName as any].unsubscribe();
         delete this.valueChanges[formName as any];
-      } else {
-        console.info(`Cannot unsubscribe from ${formName} as it doesn't exist`);
       }
     } else {
       for (const name of Object.keys(this.valueChanges)) {
@@ -251,7 +252,8 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   private updateStore(formName: keyof FormsState, form: AbstractControl, initial = false) {
     const value = this.buildFormStoreState(formName, form);
-    const action = `${initial ? 'Create' : 'Update'} ${formName}`;
+    const capitalized = formName[0].toUpperCase() + (formName as any).slice(1);
+    const action = `${initial ? 'Create' : 'Update'} ${capitalized} Form`;
     logAction(action);
     this.store.update({
       [formName]: value
