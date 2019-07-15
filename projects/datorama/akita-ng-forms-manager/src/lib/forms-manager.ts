@@ -195,7 +195,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     control: AbstractControl,
     arrControlFactory: ArrayControlFactory | HashMap<ArrayControlFactory>
   ) {
-    if (Array.isArray(formValue)) {
+    if (Array.isArray(formValue) && formValue[0] instanceof FormArray) {
       this.cleanArray(control as FormArray);
       if (!arrControlFactory) {
         throw new Error('Please provide arrControlFactory');
@@ -204,7 +204,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     } else {
       Object.keys(formValue).forEach(controlName => {
         const value = formValue[controlName];
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value[0] instanceof FormArray) {
           if (!arrControlFactory || (arrControlFactory && controlName in arrControlFactory === false)) {
             throw new Error('Please provide arrControlFactory for ' + controlName);
           }
