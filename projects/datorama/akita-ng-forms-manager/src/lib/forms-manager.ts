@@ -185,7 +185,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     if (!form.controls) {
       return value;
     }
-    debugger
+
     this.handleFormArray(value, control, arrControlFactory);
     return value;
   }
