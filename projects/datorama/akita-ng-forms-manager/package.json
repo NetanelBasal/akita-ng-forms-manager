@@ -1,11 +1,7 @@
 {
   "name": "@datorama/akita-ng-forms-manager",
   "description": "The best way to manage your Angular form state in Akita",
-<<<<<<< HEAD
   "version": "3.0.11",
-=======
-  "version": "3.0.10",
->>>>>>> 331f54cc288c3ee33374e44e610d7376cf4828c0
   "repository": {
     "url": "https://github.com/NetanelBasal/akita-ng-forms-manager"
   },
