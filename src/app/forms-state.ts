@@ -1,4 +1,5 @@
 export interface FormsState {
+  rawArrays: any;
   array: string[];
   single: string;
   settings: {

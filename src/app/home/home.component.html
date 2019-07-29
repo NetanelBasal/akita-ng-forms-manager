@@ -1,6 +1,13 @@
 <div class="container mt-30">
 
   <section>
+    <h4>Raw Arrays</h4>
+    <form [formGroup]="rawArrays">
+      <code>{{ rawArrays.value | json }}</code>
+    </form>
+  </section>
+
+  <section>
     <h4>Single Control</h4>
     <div class="form-group">
       <label for="email">Email address</label>
@@ -43,11 +50,13 @@
     <form [formGroup]="group">
       <div class="form-group">
         <label for="exampleFormControlInput1">Email address</label>
-        <input type="email" class="form-control" formControlName="email" id="exampleFormControlInput1" placeholder="name@example.com">
+        <input type="email" class="form-control" formControlName="email" id="exampleFormControlInput1"
+          placeholder="name@example.com">
       </div>
       <div class="form-group">
         <label>Price</label>
-        <input type="number" class="form-control" formControlName="price" placeholder="Price" [class.border-danger]="group.get('price').errors">
+        <input type="number" class="form-control" formControlName="price" placeholder="Price"
+          [class.border-danger]="group.get('price').errors">
         Price Valid: <code>{{ group.get('price').valid}}</code>
         <p>Price Errors: <code>{{ group.get('price').errors | json }}</code></p>
       </div>

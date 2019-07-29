@@ -22,11 +22,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   config;
   group: FormGroup;
   arr: FormArray;
+  rawArrays: FormGroup;
 
   constructor(
     private formsManager: AkitaNgFormsManager<FormsState>,
     private builder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.email = new FormControl(null, Validators.email);
@@ -35,10 +36,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.arr = new FormArray([createControl('aaa')]);
 
+    this.rawArrays = new FormGroup({
+      one: new FormControl([])
+    })
+
+
     this.config = this.builder.group({
       skills: this.builder.array([]),
       someBoolean: this.builder.control(false),
-      minAge: this.builder.control(null)
+      minAge: this.builder.control(null),
     });
 
     this.group = new FormGroup({
@@ -72,6 +78,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         arrControlFactory: { skills: createSkillControl }
       })
       .upsert('group', this.group)
+      .upsert('rawArrays', this.rawArrays)
       .upsert('array', this.arr, { arrControlFactory: createControl });
   }
 
