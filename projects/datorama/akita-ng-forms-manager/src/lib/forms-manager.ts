@@ -260,9 +260,11 @@ export class AkitaNgFormsManager<FormsState = any> {
     } as any);
   }
 
-  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl {
+  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl & { rawValue?: any } {
+
     return {
       value: this.cloneValue(control.value), // Clone object to prevent issue with third party that would be affected by store freezing.
+      rawValue: (control as any).getRawValue ? (control as any).getRawValue() : null,
       valid: control.valid,
       dirty: control.dirty,
       invalid: control.invalid,
