@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
-import { coerceArray, filterNil, HashMap, logAction } from '@datorama/akita';
-import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { FormsQuery } from './forms-manager.query';
-import { FormsStore } from './forms-manager.store';
+import {Injectable} from '@angular/core';
+import {AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {coerceArray, filterNil, HashMap, logAction} from '@datorama/akita';
+import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import {FormsQuery} from './forms-manager.query';
+import {FormsStore} from './forms-manager.store';
 
 export type AkitaAbstractControl = Pick<
   AbstractControl,
@@ -25,7 +25,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   private readonly _query: FormsQuery<FormsState>;
 
   private valueChanges: HashMap<Subscription> = {};
-  private ngForms: HashMap<BehaviorSubject<AbstractControl>> = {};
+  private ngForms: HashMap<AbstractControl> = {};
 
   constructor() {
     this._store = new FormsStore({} as FormsState);
@@ -63,7 +63,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   selectNgForm(formName: keyof FormsState): Observable<AbstractControl> {
     return this.selectForm(formName, {filterNil: true})
       .pipe(
-        switchMap(() => this.ngForms[formName as any].asObservable())
+        map(() => this.ngForms[formName as any])
       );
   }
 
@@ -108,8 +108,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   getNgForm(formName: keyof FormsState): AbstractControl {
-    const form = this.ngForms[formName as any];
-    return form ? form.getValue() : undefined;
+    return this.ngForms[formName as any];
   }
 
   hasForm(formName: keyof FormsState): boolean {
@@ -308,7 +307,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   private storeFormInstance(formName: keyof FormsState, form: AbstractControl) {
     const newForms = {
       ...this.ngForms,
-      [formName as any]: new BehaviorSubject(form)
+      [formName as any]: form
     };
 
     this.ngForms = newForms;
