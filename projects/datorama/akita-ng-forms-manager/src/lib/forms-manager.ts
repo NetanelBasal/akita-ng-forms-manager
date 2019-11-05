@@ -122,6 +122,7 @@ export class AkitaNgFormsManager<FormsState = any> {
       debounceTime?: number;
       emitEvent?: boolean;
       arrControlFactory?: ArrayControlFactory | HashMap<ArrayControlFactory>;
+      persistForm?: boolean;
     } = {}
   ) {
     const merged = { ...{ debounceTime: 300, emitEvent: false }, ...config };
@@ -134,7 +135,9 @@ export class AkitaNgFormsManager<FormsState = any> {
     } else {
       /** else update the store with the current form state */
       this.updateStore(formName, form, true);
-      this.storeFormInstance(formName, form);
+      if (merged.persistForm) {
+        this.storeFormInstance(formName, form);
+      }
     }
 
     this.valueChanges[formName as any] = merge(form.valueChanges, form.statusChanges.pipe(distinctUntilChanged()))
