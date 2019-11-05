@@ -1,10 +1,10 @@
-import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { merge, Observable, Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { coerceArray, filterNil, HashMap, isObject, logAction } from '@datorama/akita';
-import { FormsStore } from './forms-manager.store';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { coerceArray, filterNil, HashMap, logAction } from '@datorama/akita';
+import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { FormsQuery } from './forms-manager.query';
+import { FormsStore } from './forms-manager.store';
 
 export type AkitaAbstractControl = Pick<
   AbstractControl,
@@ -23,7 +23,9 @@ export type ArrayControlFactory = (value: any) => AbstractControl;
 export class AkitaNgFormsManager<FormsState = any> {
   private readonly _store: FormsStore<FormsState>;
   private readonly _query: FormsQuery<FormsState>;
+
   private valueChanges: HashMap<Subscription> = {};
+  private ngForms: HashMap<BehaviorSubject<AbstractControl>> = {};
 
   constructor() {
     this._store = new FormsStore({} as FormsState);
@@ -58,6 +60,13 @@ export class AkitaNgFormsManager<FormsState = any> {
     return this.selectControl(formName, path).pipe(map(control => control.errors));
   }
 
+  selectNgForm(formName: keyof FormsState): Observable<AbstractControl> {
+    return this.selectForm(formName, {filterNil: true})
+      .pipe(
+        switchMap(() => this.ngForms[formName as any].asObservable())
+      );
+  }
+
   /**
    * If no path specified it means that it's a single FormControl or FormArray
    */
@@ -89,13 +98,18 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   selectForm(
     formName: keyof FormsState,
-    options: { filterNil: true } = { filterNil: true }
+    options: { filterNil: true } = {filterNil: true}
   ): Observable<AkitaAbstractGroup> {
     return this.query.select(state => state[formName as any]).pipe(options.filterNil ? filterNil : s => s);
   }
 
   getForm<Name extends keyof FormsState>(formName: keyof FormsState): AkitaAbstractGroup<FormsState[Name]> {
     return this.query.getValue()[formName as any];
+  }
+
+  getNgForm(formName: keyof FormsState): AbstractControl {
+    const form = this.ngForms[formName as any];
+    return form ? form.getValue() : undefined;
   }
 
   hasForm(formName: keyof FormsState): boolean {
@@ -121,6 +135,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     } else {
       /** else update the store with the current form state */
       this.updateStore(formName, form, true);
+      this.storeFormInstance(formName, form);
     }
 
     this.valueChanges[formName as any] = merge(form.valueChanges, form.statusChanges.pipe(distinctUntilChanged()))
@@ -288,6 +303,15 @@ export class AkitaNgFormsManager<FormsState = any> {
       return false;
     }
     return typeof val === 'function' || typeof val === 'object';
+  }
+
+  private storeFormInstance(formName: keyof FormsState, form: AbstractControl) {
+    const newForms = {
+      ...this.ngForms,
+      [formName as any]: new BehaviorSubject(form)
+    };
+
+    this.ngForms = newForms;
   }
 }
 
