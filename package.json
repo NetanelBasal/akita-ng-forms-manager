@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "description": "The best way to manage your Angular form state in Akita.",
   "scripts": {
-    "release": "standard-version",
     "ng": "ng",
     "start": "ng serve",
     "copy": "cp README.md dist/datorama/akita-ng-forms-manager",
@@ -53,7 +52,6 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-packagr": "^4.2.0",
     "protractor": "~5.4.0",
-    "standard-version": "^4.4.0",
     "ts-node": "~7.0.0",
     "tsickle": ">=0.29.0",
     "tslib": "^1.9.0",

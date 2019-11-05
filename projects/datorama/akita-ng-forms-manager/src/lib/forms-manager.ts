@@ -1,15 +1,15 @@
-import {Injectable} from '@angular/core';
-import {AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn} from '@angular/forms';
-import {coerceArray, filterNil, HashMap, logAction} from '@datorama/akita';
-import {BehaviorSubject, merge, Observable, Subscription} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import {FormsQuery} from './forms-manager.query';
-import {FormsStore} from './forms-manager.store';
+import { Injectable } from '@angular/core';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { coerceArray, filterNil, HashMap, logAction } from '@datorama/akita';
+import { merge, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { FormsQuery } from './forms-manager.query';
+import { FormsStore } from './forms-manager.store';
 
 export type AkitaAbstractControl = Pick<
   AbstractControl,
   'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'
->;
+> & { rawValue: any };
 
 export interface AkitaAbstractGroup<C = any> extends AkitaAbstractControl {
   controls: { readonly [P in keyof C]: AkitaAbstractControl };
@@ -61,10 +61,7 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   selectNgForm(formName: keyof FormsState): Observable<AbstractControl> {
-    return this.selectForm(formName, {filterNil: true})
-      .pipe(
-        map(() => this.ngForms[formName as any])
-      );
+    return this.selectForm(formName, { filterNil: true }).pipe(map(() => this.ngForms[formName as any]));
   }
 
   /**
@@ -98,7 +95,7 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   selectForm(
     formName: keyof FormsState,
-    options: { filterNil: true } = {filterNil: true}
+    options: { filterNil: true } = { filterNil: true }
   ): Observable<AkitaAbstractGroup> {
     return this.query.select(state => state[formName as any]).pipe(options.filterNil ? filterNil : s => s);
   }
