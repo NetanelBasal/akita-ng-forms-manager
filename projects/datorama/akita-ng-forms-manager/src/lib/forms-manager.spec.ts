@@ -1598,4 +1598,16 @@ describe('FormsManager', () => {
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenCalledWith(['One', 'Two']);
   }));
+
+  it('should select the ng form instance', () => {
+    const spy = jasmine.createSpy('select ng form');
+    formsManager.selectNgForm('config').subscribe(spy);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(control);
+  });
+
+  it('should get the ng form instance', () => {
+    const instance = formsManager.getNgForm('config');
+    expect(instance).toEqual(control);
+  });
 });
