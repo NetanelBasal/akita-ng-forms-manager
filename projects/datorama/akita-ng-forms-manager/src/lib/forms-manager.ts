@@ -164,13 +164,16 @@ export class AkitaNgFormsManager<FormsState = any> {
 
   unsubscribe(formName?: keyof FormsState) {
     if (formName) {
-      if (this.valueChanges[formName as any]) {
-        this.valueChanges[formName as any].unsubscribe();
-        delete this.valueChanges[formName as any];
+      const _formName = formName as any;
+      this.removeFormInstance(formName);
+      if (this.valueChanges[_formName]) {
+        this.valueChanges[_formName].unsubscribe();
+        delete this.valueChanges[_formName];
       }
     } else {
       for (const name of Object.keys(this.valueChanges)) {
         this.valueChanges[name].unsubscribe();
+        this.removeFormInstance(formName);
       }
       this.valueChanges = {};
     }
@@ -278,7 +281,6 @@ export class AkitaNgFormsManager<FormsState = any> {
   }
 
   private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl & { rawValue?: any } {
-
     return {
       value: this.cloneValue(control.value), // Clone object to prevent issue with third party that would be affected by store freezing.
       rawValue: (control as any).getRawValue ? (control as any).getRawValue() : null,
@@ -314,6 +316,12 @@ export class AkitaNgFormsManager<FormsState = any> {
     };
 
     this.ngForms = newForms;
+  }
+
+  private removeFormInstance(formName: keyof FormsState) {
+    if (this.ngForms[formName as any]) {
+      delete this.ngForms[formName as any];
+    }
   }
 }
 
