@@ -1,6 +1,6 @@
-import { fakeAsync, tick } from '@angular/core/testing';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AkitaNgFormsManager } from './forms-manager';
+import {fakeAsync, tick} from '@angular/core/testing';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AkitaNgFormsManager} from './forms-manager';
 
 // get forms snapshot
 function gs(formsManager) {
@@ -25,7 +25,7 @@ describe('FormsManager', () => {
     });
 
     formsManager
-      .upsert('config', control)
+      .upsert('config', control, {persistForm: true})
       .upsert('arr', arr)
       .upsert('group', group);
   });
@@ -39,6 +39,7 @@ describe('FormsManager', () => {
     expect(gs(formsManager)).toEqual({
       config: {
         value: '',
+        rawValue: null,
         valid: false,
         dirty: false,
         invalid: true,
@@ -50,6 +51,7 @@ describe('FormsManager', () => {
       },
       arr: {
         value: [],
+        rawValue: [],
         valid: true,
         dirty: false,
         invalid: false,
@@ -70,6 +72,15 @@ describe('FormsManager', () => {
           },
           arr: []
         },
+        rawValue: {
+          name: null,
+          email: null,
+          phone: {
+            number: null,
+            prefix: null
+          },
+          arr: []
+        },
         valid: true,
         dirty: false,
         invalid: false,
@@ -81,6 +92,7 @@ describe('FormsManager', () => {
         controls: {
           name: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -92,6 +104,7 @@ describe('FormsManager', () => {
           },
           email: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -106,6 +119,10 @@ describe('FormsManager', () => {
               number: null,
               prefix: null
             },
+            rawValue: {
+              number: null,
+              prefix: null
+            },
             valid: true,
             dirty: false,
             invalid: false,
@@ -117,6 +134,7 @@ describe('FormsManager', () => {
             controls: {
               number: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -128,6 +146,7 @@ describe('FormsManager', () => {
               },
               prefix: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -141,6 +160,7 @@ describe('FormsManager', () => {
           },
           arr: {
             value: [],
+            rawValue: [],
             valid: true,
             dirty: false,
             invalid: false,
@@ -158,6 +178,7 @@ describe('FormsManager', () => {
     expect(gs(formsManager)).toEqual({
       config: {
         value: 'New value',
+        rawValue: null,
         valid: true,
         dirty: false,
         invalid: false,
@@ -169,6 +190,7 @@ describe('FormsManager', () => {
       },
       arr: {
         value: [],
+        rawValue: [],
         valid: true,
         dirty: false,
         invalid: false,
@@ -189,6 +211,15 @@ describe('FormsManager', () => {
           },
           arr: []
         },
+        rawValue: {
+          name: null,
+          email: null,
+          phone: {
+            number: null,
+            prefix: null
+          },
+          arr: []
+        },
         valid: true,
         dirty: false,
         invalid: false,
@@ -200,6 +231,7 @@ describe('FormsManager', () => {
         controls: {
           name: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -211,6 +243,7 @@ describe('FormsManager', () => {
           },
           email: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -225,6 +258,10 @@ describe('FormsManager', () => {
               number: null,
               prefix: null
             },
+            rawValue: {
+              number: null,
+              prefix: null
+            },
             valid: true,
             dirty: false,
             invalid: false,
@@ -236,6 +273,7 @@ describe('FormsManager', () => {
             controls: {
               number: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -247,6 +285,7 @@ describe('FormsManager', () => {
               },
               prefix: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -260,6 +299,7 @@ describe('FormsManager', () => {
           },
           arr: {
             value: [],
+            rawValue: [],
             valid: true,
             dirty: false,
             invalid: false,
@@ -278,6 +318,7 @@ describe('FormsManager', () => {
     expect(gs(formsManager)).toEqual({
       config: {
         value: 'New value',
+        rawValue: null,
         valid: true,
         dirty: false,
         invalid: false,
@@ -289,6 +330,7 @@ describe('FormsManager', () => {
       },
       arr: {
         value: ['One', 'Two'],
+        rawValue: ['One', 'Two'],
         valid: true,
         dirty: false,
         invalid: false,
@@ -300,6 +342,7 @@ describe('FormsManager', () => {
         controls: {
           '0': {
             value: 'One',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -311,6 +354,7 @@ describe('FormsManager', () => {
           },
           '1': {
             value: 'Two',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -332,6 +376,15 @@ describe('FormsManager', () => {
           },
           arr: []
         },
+        rawValue: {
+          name: null,
+          email: null,
+          phone: {
+            number: null,
+            prefix: null
+          },
+          arr: []
+        },
         valid: true,
         dirty: false,
         invalid: false,
@@ -343,6 +396,7 @@ describe('FormsManager', () => {
         controls: {
           name: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -354,6 +408,7 @@ describe('FormsManager', () => {
           },
           email: {
             value: null,
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -368,6 +423,10 @@ describe('FormsManager', () => {
               number: null,
               prefix: null
             },
+            rawValue: {
+              number: null,
+              prefix: null
+            },
             valid: true,
             dirty: false,
             invalid: false,
@@ -379,6 +438,7 @@ describe('FormsManager', () => {
             controls: {
               number: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -390,6 +450,7 @@ describe('FormsManager', () => {
               },
               prefix: {
                 value: null,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -403,6 +464,7 @@ describe('FormsManager', () => {
           },
           arr: {
             value: [],
+            rawValue: [],
             valid: true,
             dirty: false,
             invalid: false,
@@ -429,6 +491,7 @@ describe('FormsManager', () => {
     expect(gs(formsManager)).toEqual({
       config: {
         value: 'New value',
+        rawValue: null,
         valid: true,
         dirty: false,
         invalid: false,
@@ -440,6 +503,7 @@ describe('FormsManager', () => {
       },
       arr: {
         value: ['One', 'Two'],
+        rawValue: ['One', 'Two'],
         valid: true,
         dirty: false,
         invalid: false,
@@ -451,6 +515,7 @@ describe('FormsManager', () => {
         controls: {
           '0': {
             value: 'One',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -462,6 +527,7 @@ describe('FormsManager', () => {
           },
           '1': {
             value: 'Two',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -483,6 +549,15 @@ describe('FormsManager', () => {
           },
           arr: ['One', 'Two']
         },
+        rawValue: {
+          name: 'Netanel',
+          email: 'n@n.com',
+          phone: {
+            number: 1,
+            prefix: 2
+          },
+          arr: ['One', 'Two']
+        },
         valid: true,
         dirty: false,
         invalid: false,
@@ -494,6 +569,7 @@ describe('FormsManager', () => {
         controls: {
           name: {
             value: 'Netanel',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -505,6 +581,7 @@ describe('FormsManager', () => {
           },
           email: {
             value: 'n@n.com',
+            rawValue: null,
             valid: true,
             dirty: false,
             invalid: false,
@@ -519,6 +596,10 @@ describe('FormsManager', () => {
               number: 1,
               prefix: 2
             },
+            rawValue: {
+              number: 1,
+              prefix: 2
+            },
             valid: true,
             dirty: false,
             invalid: false,
@@ -530,6 +611,7 @@ describe('FormsManager', () => {
             controls: {
               number: {
                 value: 1,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -541,6 +623,7 @@ describe('FormsManager', () => {
               },
               prefix: {
                 value: 2,
+                rawValue: null,
                 valid: true,
                 dirty: false,
                 invalid: false,
@@ -554,6 +637,7 @@ describe('FormsManager', () => {
           },
           arr: {
             value: ['One', 'Two'],
+            rawValue: ['One', 'Two'],
             valid: true,
             dirty: false,
             invalid: false,
@@ -574,6 +658,7 @@ describe('FormsManager', () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
       value: '',
+      rawValue: null,
       valid: false,
       dirty: false,
       invalid: true,
@@ -588,6 +673,7 @@ describe('FormsManager', () => {
     expect(spy).toHaveBeenCalledTimes(2); // one before
     expect(spy).toHaveBeenCalledWith({
       value: 'Update!!!!',
+      rawValue: null,
       valid: true,
       dirty: false,
       invalid: false,
@@ -1610,4 +1696,12 @@ describe('FormsManager', () => {
     const instance = formsManager.getNgForm('config');
     expect(instance).toEqual(control);
   });
+
+  it('should remove ng form instance on unsubscribe', () => {
+    const formName = 'config';
+    formsManager.unsubscribe(formName);
+    const instance = formsManager.getNgForm(formName);
+    expect(instance).toBeUndefined();
+  });
+
 });
