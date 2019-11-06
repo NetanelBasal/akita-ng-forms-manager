@@ -3,7 +3,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AkitaNgFormsManager } from './forms-manager';
 
 // get forms snapshot
-function gs(formsManager) {
+function getSnapshot(formsManager) {
   return formsManager.query.getValue();
 }
 
@@ -36,7 +36,7 @@ describe('FormsManager', () => {
   });
 
   it('should update the store with forms value', fakeAsync(() => {
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: '',
         rawValue: null,
@@ -175,7 +175,7 @@ describe('FormsManager', () => {
     });
     control.patchValue('New value');
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -315,7 +315,7 @@ describe('FormsManager', () => {
     arr.push(new FormControl('One'));
     arr.push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -488,7 +488,7 @@ describe('FormsManager', () => {
     (group.get('arr') as FormArray).push(new FormControl('One'));
     (group.get('arr') as FormArray).push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -686,7 +686,7 @@ describe('FormsManager', () => {
   }));
 
   it('should update the store with forms value', fakeAsync(() => {
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: '',
         rawValue: null,
@@ -825,7 +825,7 @@ describe('FormsManager', () => {
     });
     control.patchValue('New value');
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -965,7 +965,7 @@ describe('FormsManager', () => {
     arr.push(new FormControl('One'));
     arr.push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -1138,7 +1138,7 @@ describe('FormsManager', () => {
     (group.get('arr') as FormArray).push(new FormControl('One'));
     (group.get('arr') as FormArray).push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -1590,11 +1590,6 @@ describe('FormsManager', () => {
     });
   });
 
-  it('should delete a form', () => {
-    formsManager.remove('group');
-    expect(gs(formsManager)['group']).toBeNull();
-  });
-
   it('should subscribe to validity', fakeAsync(() => {
     const spy = jasmine.createSpy('select form');
     formsManager.selectValid('config').subscribe(spy);
@@ -1704,17 +1699,28 @@ describe('FormsManager', () => {
     expect(instance).toBeUndefined();
   });
 
-  it('should destroy form', () => {
+  it('should delete form - with formName', () => {
     const formName = 'config';
 
-    formsManager.destroy(formName);
+    formsManager.remove(formName);
     const instance = formsManager.getNgForm(formName);
     const form = formsManager.getForm(formName);
     const spy = jasmine.createSpy('select form');
     formsManager.selectForm(formName).subscribe(spy);
 
     expect(instance).toBeUndefined();
-    expect(form).toBeNull();
+    expect(form).toBeUndefined();
+    expect(spy).toHaveBeenCalledTimes(0);
+  });
+
+  it('should delete form - without formName', () => {
+    formsManager.remove();
+    const snapshot = getSnapshot(formsManager);
+    const spy = jasmine.createSpy('select form');
+    formsManager.selectForm('group').subscribe(spy);
+
+    expect(snapshot).toEqual({});
+    expect(formsManager.getNgForm('group')).toBeUndefined();
     expect(spy).toHaveBeenCalledTimes(0);
   });
 });
