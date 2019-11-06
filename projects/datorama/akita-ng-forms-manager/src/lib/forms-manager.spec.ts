@@ -1,6 +1,6 @@
-import {fakeAsync, tick} from '@angular/core/testing';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {AkitaNgFormsManager} from './forms-manager';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AkitaNgFormsManager } from './forms-manager';
 
 // get forms snapshot
 function gs(formsManager) {
@@ -25,7 +25,7 @@ describe('FormsManager', () => {
     });
 
     formsManager
-      .upsert('config', control, {persistForm: true})
+      .upsert('config', control, { persistForm: true })
       .upsert('arr', arr)
       .upsert('group', group);
   });
@@ -44,7 +44,7 @@ describe('FormsManager', () => {
         dirty: false,
         invalid: true,
         disabled: false,
-        errors: {required: true},
+        errors: { required: true },
         touched: false,
         pristine: true,
         pending: false
@@ -663,7 +663,7 @@ describe('FormsManager', () => {
       dirty: false,
       invalid: true,
       disabled: false,
-      errors: {required: true},
+      errors: { required: true },
       touched: false,
       pristine: true,
       pending: false
@@ -694,7 +694,7 @@ describe('FormsManager', () => {
         dirty: false,
         invalid: true,
         disabled: false,
-        errors: {required: true},
+        errors: { required: true },
         touched: false,
         pristine: true,
         pending: false
@@ -1314,7 +1314,7 @@ describe('FormsManager', () => {
       dirty: false,
       invalid: true,
       disabled: false,
-      errors: {required: true},
+      errors: { required: true },
       touched: false,
       pristine: true,
       pending: false
@@ -1614,7 +1614,7 @@ describe('FormsManager', () => {
     const spy = jasmine.createSpy('select form errors');
     formsManager.selectErrors('config').subscribe(spy);
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
     control.patchValue('Valid!');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -1622,7 +1622,7 @@ describe('FormsManager', () => {
     control.patchValue('');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(3);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
   }));
 
   it('should subscribe to errors inside group', fakeAsync(() => {
@@ -1634,7 +1634,7 @@ describe('FormsManager', () => {
     group.get('phone.number').updateValueAndValidity();
     tick(301);
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
     group.get('phone.number').patchValue(12);
     tick(301);
     expect(spy).toHaveBeenCalledTimes(3);
@@ -1642,7 +1642,7 @@ describe('FormsManager', () => {
     group.get('phone.number').patchValue('');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(4);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
   }));
 
   it('should subscribe to value', fakeAsync(() => {
@@ -1704,4 +1704,17 @@ describe('FormsManager', () => {
     expect(instance).toBeUndefined();
   });
 
+  it('should destroy form', () => {
+    const formName = 'config';
+
+    formsManager.destroy(formName);
+    const instance = formsManager.getNgForm(formName);
+    const form = formsManager.getForm(formName);
+    const spy = jasmine.createSpy('select form');
+    formsManager.selectForm(formName).subscribe(spy);
+
+    expect(instance).toBeUndefined();
+    expect(form).toBeNull();
+    expect(spy).toHaveBeenCalledTimes(0);
+  });
 });
