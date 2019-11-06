@@ -176,16 +176,17 @@ export class AkitaNgFormsManager<FormsState = any> {
     }
   }
 
-  destroy(formName?: keyof FormsState) {
-    if (formName) {
-      this.remove(formName);
-    } else {
-      const availableForms = Object.keys(this.query.getValue());
-      for (const name of availableForms) {
-        this.remove(name as any);
+  private removeFromStore(formName: keyof FormsState) {
+    const snapshot = this.query.getValue();
+    const newState: Partial<FormsState> = Object.keys(snapshot).reduce((acc, currentFormName) => {
+      if (formName !== currentFormName) {
+        acc[currentFormName] = snapshot[currentFormName];
       }
-    }
-    this.unsubscribe(formName);
+      return acc;
+    }, {});
+
+    logAction(`Remove ${formName}`);
+    this.store._setState(() => newState as any);
   }
 
   private resolveControl(form, path: string) {
