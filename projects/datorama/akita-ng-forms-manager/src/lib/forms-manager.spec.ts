@@ -1,9 +1,9 @@
-import {fakeAsync, tick} from '@angular/core/testing';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {AkitaNgFormsManager} from './forms-manager';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AkitaNgFormsManager } from './forms-manager';
 
 // get forms snapshot
-function gs(formsManager) {
+function getSnapshot(formsManager) {
   return formsManager.query.getValue();
 }
 
@@ -25,7 +25,7 @@ describe('FormsManager', () => {
     });
 
     formsManager
-      .upsert('config', control, {persistForm: true})
+      .upsert('config', control, { persistForm: true })
       .upsert('arr', arr)
       .upsert('group', group);
   });
@@ -36,7 +36,7 @@ describe('FormsManager', () => {
   });
 
   it('should update the store with forms value', fakeAsync(() => {
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: '',
         rawValue: null,
@@ -44,7 +44,7 @@ describe('FormsManager', () => {
         dirty: false,
         invalid: true,
         disabled: false,
-        errors: {required: true},
+        errors: { required: true },
         touched: false,
         pristine: true,
         pending: false
@@ -175,7 +175,7 @@ describe('FormsManager', () => {
     });
     control.patchValue('New value');
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -315,7 +315,7 @@ describe('FormsManager', () => {
     arr.push(new FormControl('One'));
     arr.push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -488,7 +488,7 @@ describe('FormsManager', () => {
     (group.get('arr') as FormArray).push(new FormControl('One'));
     (group.get('arr') as FormArray).push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -663,7 +663,7 @@ describe('FormsManager', () => {
       dirty: false,
       invalid: true,
       disabled: false,
-      errors: {required: true},
+      errors: { required: true },
       touched: false,
       pristine: true,
       pending: false
@@ -686,7 +686,7 @@ describe('FormsManager', () => {
   }));
 
   it('should update the store with forms value', fakeAsync(() => {
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: '',
         rawValue: null,
@@ -694,7 +694,7 @@ describe('FormsManager', () => {
         dirty: false,
         invalid: true,
         disabled: false,
-        errors: {required: true},
+        errors: { required: true },
         touched: false,
         pristine: true,
         pending: false
@@ -825,7 +825,7 @@ describe('FormsManager', () => {
     });
     control.patchValue('New value');
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -965,7 +965,7 @@ describe('FormsManager', () => {
     arr.push(new FormControl('One'));
     arr.push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -1138,7 +1138,7 @@ describe('FormsManager', () => {
     (group.get('arr') as FormArray).push(new FormControl('One'));
     (group.get('arr') as FormArray).push(new FormControl('Two'));
     tick(301);
-    expect(gs(formsManager)).toEqual({
+    expect(getSnapshot(formsManager)).toEqual({
       config: {
         value: 'New value',
         rawValue: null,
@@ -1314,7 +1314,7 @@ describe('FormsManager', () => {
       dirty: false,
       invalid: true,
       disabled: false,
-      errors: {required: true},
+      errors: { required: true },
       touched: false,
       pristine: true,
       pending: false
@@ -1590,11 +1590,6 @@ describe('FormsManager', () => {
     });
   });
 
-  it('should delete a form', () => {
-    formsManager.remove('group');
-    expect(gs(formsManager)['group']).toBeNull();
-  });
-
   it('should subscribe to validity', fakeAsync(() => {
     const spy = jasmine.createSpy('select form');
     formsManager.selectValid('config').subscribe(spy);
@@ -1614,7 +1609,7 @@ describe('FormsManager', () => {
     const spy = jasmine.createSpy('select form errors');
     formsManager.selectErrors('config').subscribe(spy);
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
     control.patchValue('Valid!');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -1622,7 +1617,7 @@ describe('FormsManager', () => {
     control.patchValue('');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(3);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
   }));
 
   it('should subscribe to errors inside group', fakeAsync(() => {
@@ -1634,7 +1629,7 @@ describe('FormsManager', () => {
     group.get('phone.number').updateValueAndValidity();
     tick(301);
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
     group.get('phone.number').patchValue(12);
     tick(301);
     expect(spy).toHaveBeenCalledTimes(3);
@@ -1642,7 +1637,7 @@ describe('FormsManager', () => {
     group.get('phone.number').patchValue('');
     tick(301);
     expect(spy).toHaveBeenCalledTimes(4);
-    expect(spy).toHaveBeenCalledWith({required: true});
+    expect(spy).toHaveBeenCalledWith({ required: true });
   }));
 
   it('should subscribe to value', fakeAsync(() => {
@@ -1704,4 +1699,28 @@ describe('FormsManager', () => {
     expect(instance).toBeUndefined();
   });
 
+  it('should delete form - with formName', () => {
+    const formName = 'config';
+
+    formsManager.remove(formName);
+    const instance = formsManager.getNgForm(formName);
+    const form = formsManager.getForm(formName);
+    const spy = jasmine.createSpy('select form');
+    formsManager.selectForm(formName).subscribe(spy);
+
+    expect(instance).toBeUndefined();
+    expect(form).toBeUndefined();
+    expect(spy).toHaveBeenCalledTimes(0);
+  });
+
+  it('should delete form - without formName', () => {
+    formsManager.remove();
+    const snapshot = getSnapshot(formsManager);
+    const spy = jasmine.createSpy('select form');
+    formsManager.selectForm('group').subscribe(spy);
+
+    expect(snapshot).toEqual({});
+    expect(formsManager.getNgForm('group')).toBeUndefined();
+    expect(spy).toHaveBeenCalledTimes(0);
+  });
 });

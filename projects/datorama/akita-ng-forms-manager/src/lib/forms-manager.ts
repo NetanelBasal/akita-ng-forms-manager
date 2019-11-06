@@ -6,10 +6,10 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { FormsQuery } from './forms-manager.query';
 import { FormsStore } from './forms-manager.store';
 
-export type AkitaAbstractControl = Pick<
-  AbstractControl,
-  'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'
-> & { rawValue: any };
+export type AkitaAbstractControl =
+  Pick<AbstractControl,
+    'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'>
+  & { rawValue: any };
 
 export interface AkitaAbstractGroup<C = any> extends AkitaAbstractControl {
   controls: { readonly [P in keyof C]: AkitaAbstractControl };
@@ -144,36 +144,49 @@ export class AkitaNgFormsManager<FormsState = any> {
     return this;
   }
 
-  remove(formName: keyof FormsState) {
-    const snapshot = this.query.getValue();
-    const newState: Partial<FormsState> = Object.keys(snapshot).reduce((acc, currentFormName) => {
-      if (formName !== currentFormName) {
-        acc[currentFormName] = snapshot[currentFormName];
-      } else {
-        acc[currentFormName] = null;
+  remove(formName?: keyof FormsState) {
+    if (formName) {
+      this.removeFromStore(formName);
+    } else {
+      const availableForms = Object.keys(this.query.getValue());
+      for (const name of availableForms) {
+        this.removeFromStore(name as any);
       }
-      return acc;
-    }, {});
-
-    logAction(`Clear ${formName}`);
-    this.store.update(() => newState as any);
+    }
+    this.unsubscribe(formName);
   }
 
-  unsubscribe(formName?: keyof FormsState) {
-    if (formName) {
-      const _formName = formName as any;
-      this.removeFormInstance(formName);
+  unsubscribe(formName?: keyof FormsState, config: { removeNgForm?: boolean } = {}) {
+    const _config = { removeNgForm: true, ...config };
+    const _formName = formName as any;
+    const removeInstance = (name: any) => _config.removeNgForm ? this.removeFormInstance(name) : null;
+
+    if (_formName) {
       if (this.valueChanges[_formName]) {
         this.valueChanges[_formName].unsubscribe();
         delete this.valueChanges[_formName];
+        removeInstance(_formName);
       }
     } else {
       for (const name of Object.keys(this.valueChanges)) {
         this.valueChanges[name].unsubscribe();
-        this.removeFormInstance(formName);
+        removeInstance(name);
       }
       this.valueChanges = {};
     }
+  }
+
+  private removeFromStore(formName: keyof FormsState) {
+    const snapshot = this.query.getValue();
+    const newState: Partial<FormsState> = Object.keys(snapshot).reduce((acc, currentFormName) => {
+      if (formName !== currentFormName) {
+        acc[currentFormName] = snapshot[currentFormName];
+      }
+      return acc;
+    }, {});
+
+    logAction(`Remove ${formName}`);
+    this.store._setState(() => newState as any);
   }
 
   private resolveControl(form, path: string) {
@@ -277,7 +290,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     } as any);
   }
 
-  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl & { rawValue?: any } {
+  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl {
     return {
       value: this.cloneValue(control.value), // Clone object to prevent issue with third party that would be affected by store freezing.
       rawValue: (control as any).getRawValue ? (control as any).getRawValue() : null,
