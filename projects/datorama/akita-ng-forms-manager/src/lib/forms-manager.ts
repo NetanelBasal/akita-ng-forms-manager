@@ -6,10 +6,10 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { FormsQuery } from './forms-manager.query';
 import { FormsStore } from './forms-manager.store';
 
-export type AkitaAbstractControl = Pick<
-  AbstractControl,
-  'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'
-> & { rawValue: any };
+export type AkitaAbstractControl =
+  Pick<AbstractControl,
+    'value' | 'valid' | 'invalid' | 'disabled' | 'errors' | 'touched' | 'pristine' | 'pending' | 'dirty'>
+  & { rawValue: any };
 
 export interface AkitaAbstractGroup<C = any> extends AkitaAbstractControl {
   controls: { readonly [P in keyof C]: AkitaAbstractControl };
@@ -176,6 +176,18 @@ export class AkitaNgFormsManager<FormsState = any> {
     }
   }
 
+  destroy(formName?: keyof FormsState) {
+    if (formName) {
+      this.remove(formName);
+    } else {
+      const availableForms = Object.keys(this.query.getValue());
+      for (const name of availableForms) {
+        this.remove(name as any);
+      }
+    }
+    this.unsubscribe(formName);
+  }
+
   private resolveControl(form, path: string) {
     const [first, ...rest] = path.split('.');
     if (rest.length === 0) {
@@ -277,7 +289,7 @@ export class AkitaNgFormsManager<FormsState = any> {
     } as any);
   }
 
-  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl & { rawValue?: any } {
+  private resolveFormToStore(control: Partial<AbstractControl>): AkitaAbstractControl {
     return {
       value: this.cloneValue(control.value), // Clone object to prevent issue with third party that would be affected by store freezing.
       rawValue: (control as any).getRawValue ? (control as any).getRawValue() : null,
